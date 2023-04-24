@@ -8,62 +8,54 @@ app = {}
 
 app.data = {
 	songs: [],
-	token: -1,
-	playlist: []
+	recomended_songs: [],
+	playlist: [],
+	token: 0,
+	chosen_songs: [],
+	cloak: false
 };
 
-// get_tracks = (tracks) => {
-	// url = 'https://api.spotify.com/v1/tracks/';
-	// axios.get(url + tracks + '?market=NA', {
-		// headers: { 'Authorization' : 'Bearer ' + app.data.token}
-	// }).then((result) => {
-		// song = result.data;
-		
-		// app.data.songs = [song, song];
-		// var audio1 = document.getElementById("player_1");
-		// audio1.src = app.data.songs[0]['preview_url'];
-		// audio1.load();
-		// var audio2 = document.getElementById("player_2");
-		// audio2.src = app.data.songs[1]['preview_url'];
-		// audio2.load();
-	// })
+//1138
+// Constr.prototype.getTracks = function (trackIds, options, callback) {
+// var requestData = {
+  // url: _baseUri + '/tracks/',
+  // params: { ids: trackIds.join(',') }
+// };
+// return _checkParamsAndPerformRequest(requestData, options, callback);
 // };
 
-play = (imageNum) => {
-	if(imageNum == 1){
-		var audio = document.getElementById("player_1");
-		var iGrey = document.getElementById("album_2");
-		var iTrans = document.getElementById("album_1");
-	}
-	else{
-		var audio = document.getElementById("player_2");
-		var iGrey = document.getElementById("album_1");
-		var iTrans = document.getElementById("album_2");
-	}
-
-	iGrey.style.filter = 'grayscale(1)';
-	iTrans.style.transform = 'scale(1.03)';
-	audio.play();
-};
-
-stop = (imageNum) => {
-	if(imageNum == 1){
-		var audio = document.getElementById("player_1");
-		var iGrey = document.getElementById("album_2");
-		var iTrans = document.getElementById("album_1");
-	}
-	else{
-		var audio = document.getElementById("player_2");
-		var iGrey = document.getElementById("album_1");
-		var iTrans = document.getElementById("album_2");
+get_recomended = () => {
+	if(!app.data.chosen_songs.length){
+		return;
 	}
 	
-	iGrey.style.filter = 'grayscale(0)';
-	iTrans.style.transform = 'scale(1)';
-	audio.pause();
+	var url = 'https://api.spotify.com/v1/recommendations/';
+	var seed_tracks = '?seed_tracks=';
+	var market = '&market=US';
+	
+	if(app.data.chosen_songs.length < 5){
+		for (let i = 0; i < app.data.chosen_songs.length; i++) {
+		  seed_tracks += app.data.chosen_songs[i] + ',';
+		}
+	}
+	else{
+		for (let i = 0; i < 5; i++){
+		  seed_tracks += app.data.chosen_songs[app.data.chosen_songs.length - (1 + i)] + ',';
+		}
+		// console.log(seed_tracks);
+	}
+	
+	var request = url + seed_tracks + market;
+	
+	axios.get(request, {
+		headers: { 'Authorization' : 'Bearer ' + app.data.token}
+	}).then((result) => {
+		// console.log(result);
+		app.data.recomended_songs = result.data.tracks;
+	})
 };
 
-choose = () => {
+get_tracks = () => {
 	song1_url = app.data.playlist[getRandomInt(app.data.playlist.length)];
 	song2_url = app.data.playlist[getRandomInt(app.data.playlist.length)];
 	
@@ -75,21 +67,56 @@ choose = () => {
 	songs_url = '?ids=' + song1_url + ',' + song2_url + '&';
 	market = 'market=US';
 	
-	console.log(song1_url + ' vs ' + song2_url);
-	
-	//'?market=NA' <- need to get this back in there somehow
-	
 	axios.get(url + songs_url + market, {
 		headers: { 'Authorization' : 'Bearer ' + app.data.token}
 	}).then((result) => {
 		app.data.songs = [result.data.tracks[0], result.data.tracks[1]];
-		var audio1 = document.getElementById("player_1");
-		audio1.src = app.data.songs[0]['preview_url'];
-		audio1.load();
-		var audio2 = document.getElementById("player_2");
-		audio2.src = app.data.songs[1]['preview_url'];
-		audio2.load();
-	})
+		app.data.cloak = true;
+		document.getElementById("player_1").load();
+		document.getElementById("player_2").load();
+	})	
+};
+
+play = (player, albumA, albumB) => {
+	document.getElementById(albumB).style.filter = 'grayscale(1)';
+	document.getElementById(albumA).style.transform = 'scale(1.03)';
+	document.getElementById(player).play();
+};
+
+stop = (player, albumA, albumB) => {
+	document.getElementById(albumB).style.filter = 'grayscale(0)';
+	document.getElementById(albumA).style.transform = 'scale(1)';
+	document.getElementById(player).pause();
+};
+
+choose = (chosen) => {
+	chosen = chosen.slice(34);
+	// console.log(chosen);
+	app.data.chosen_songs.push(chosen);
+	
+	// console.log(app.data.chosen_songs.length);
+	if(app.data.chosen_songs.length % 5 == 0){
+			get_recomended();
+	}
+	
+	if(app.data.chosen_songs.length > 5){
+		// console.log(app.data.recomended_songs.length);
+		var song1 = app.data.recomended_songs.shift();
+		while(song1.preview_url == null){
+			song1 = app.data.recomended_songs.shift();
+		}
+		var song2 = app.data.recomended_songs.shift();
+		while(song2.preview_url == null){
+			song2 = app.data.recomended_songs.shift();
+		}
+		app.data.songs = [song1, song2];
+		app.data.cloak = true;
+		document.getElementById("player_1").load();
+		document.getElementById("player_2").load();
+	}
+	else{
+		get_tracks();
+	}
 };
 
 // We form the dictionary of all methods, so we can assign them
@@ -98,6 +125,7 @@ app.methods = {
 	play: play,
 	stop: stop,
 	choose: choose,
+	get_recomended: get_recomended,
 };
 
 // This creates the Vue instance.
@@ -105,6 +133,14 @@ app.vue = new Vue({
 	el: "#vue-target",
 	data: app.data,
 	methods: app.methods,
+	// mounted: function (){
+		// document.onreadystatechange = () => {
+			// if (document.readyState == "complete") {
+				// document.getElementById("player_1").volume = 0.5;
+				// document.getElementById("player_2").volume = 0.5;
+			// }
+		// }
+	// }
 });
 
 // And this initializes it.
@@ -126,38 +162,11 @@ app.init = async () => {
 	
 	data = await result.json();
 	app.data.token = data.access_token;
-	console.log('Token: ' + app.data.token);
+	// console.log('Token: ' + app.data.token);
 	
 	app.data.playlist = JSON.parse(playlist);
 	
-	song1_url = app.data.playlist[getRandomInt(app.data.playlist.length)];
-	song2_url = app.data.playlist[getRandomInt(app.data.playlist.length)];
-	
-	while(song1_url == song2_url){
-		song2_url = app.data.playlist[getRandomInt(app.data.playlist.length)];
-	}
-	
-//1138
-// Constr.prototype.getTracks = function (trackIds, options, callback) {
-// var requestData = {
-  // url: _baseUri + '/tracks/',
-  // params: { ids: trackIds.join(',') }
-// };
-// return _checkParamsAndPerformRequest(requestData, options, callback);
-// };
-	
-	url = 'https://api.spotify.com/v1/tracks/';
-	songs_url = '?ids=' + song1_url + ',' + song2_url + '&'; // don't know why i need extra , to make this work
-	market = 'market=US';
-	console.log(song1_url + ' vs ' + song2_url);
-	
-	axios.get(url + songs_url + market, {
-		headers: { 'Authorization' : 'Bearer ' + app.data.token}
-	}).then((result) => {
-		app.data.songs = [result.data.tracks[0], result.data.tracks[1]];
-		// all this data can be found in chrome debuger, much easier process
-		// console.log('href: ' +result['data']['href']);
-	})
+	get_tracks();
 };
 
 app.init();
