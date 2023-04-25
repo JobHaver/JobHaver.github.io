@@ -51,7 +51,7 @@ body {
 <!-- <div id="vue-target" class="section" v-if="cloak"> -->
 <div class="columns">
     <div class="column is-one-third">
-        <div class="container block" @mouseover="play('player_1', 'album_1', 'album_2')" @mouseout="stop('player_1', 'album_1', 'album_2')" @click="choose(songs[0].href)">
+        <div class="columns is-centered" @mouseover="play('player_1', 'album_1', 'album_2')" @mouseout="stop('player_1', 'album_1', 'album_2')" @click="choose(songs[0].href)">
             <img style="transition-duration: 0.5s;" id="album_1" v-bind:src="songs[0]['album']['images'][0]['url']">
         </div>
         <div class="columns is-centered">
@@ -86,7 +86,7 @@ body {
         </div>
     </div>
     <div class="column is-one-third">
-        <div class="container block" @mouseover="play('player_2', 'album_2', 'album_1')" @mouseout="stop('player_2', 'album_2', 'album_1')" @click="choose(songs[1].href)">
+        <div class="columns is-centered" @mouseover="play('player_2', 'album_2', 'album_1')" @mouseout="stop('player_2', 'album_2', 'album_1')" @click="choose(songs[1].href)">
             <img style="transition-duration: 0.5s;" id="album_2" v-bind:src="songs[1]['album']['images'][0]['url']">
         </div>
         <div class="columns is-centered">
