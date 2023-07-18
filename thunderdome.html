@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" style="overflow: auto;">
+<style>
+[v-cloak] {
+     display: none;
+}
+
+html, body {
+  background-image: url("https://img.freepik.com/premium-vector/seamless-repeating-pattern-birds_209002-67.jpg?w=1000");
+}
+
+body {
+  margin: 0;
+  background-image: url("https://img.freepik.com/premium-vector/seamless-repeating-pattern-birds_209002-67.jpg?w=1000");
+  <!-- background-image: url("https://cdn.discordapp.com/attachments/257282783980814336/1086147140407005265/zWkSvj.jpg"); -->
+    
+  <!-- background-size: cover; -->
+  <!-- background-blend-mode: color; -->
+  <!-- overflow: hidden; -->
+}
+</style>
+
+<head>
+	<title>Thunderdome</title>
+	<link rel="icon" href="https://cdn.discordapp.com/attachments/829110971049574432/1087863554738241556/thunderhead3.png">
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
+	<link rel="stylesheet" href="css/bulma.css">
+	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
+</head>
+<body>
+	<!-- Navigation bar -->
+	<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+	  <div class="navbar-brand">
+		<!-- <a class="navbar-item" onclick="toggleThunder()"> -->
+		  <!-- <img src="https://media.discordapp.net/attachments/829110971049574432/850510009397149706/td6.PNG"> -->
+		  <!-- DONT UNCOMMENT THIS<img class="logo" width="150" src="images/site_icon.png"> -->
+		<!-- </a> -->
+		<!-- <a class="navbar-item" onclick="toggleRec()"> -->
+			<!-- Recommendations -->
+		<!-- </a> -->
+	  </div>
+	</nav>
+</body>
+
+<div id="vue-target" v-if="cloak">
+
+<div class="body" id="dome">
+<div class="section">
+<!-- <div id="vue-target" class="section" v-if="cloak"> -->
+<div class="columns">
+    <div class="column is-one-third">
+        <div class="columns is-centered" @mouseover="play('player_1', 'album_1', 'album_2')" @mouseout="stop('player_1', 'album_1', 'album_2')" @click="choose(songs[0].href)">
+            <img style="transition-duration: 0.5s;  cursor: pointer;" id="album_1" v-bind:src="songs[0]['album']['images'][0]['url']">
+        </div>
+        <div class="columns is-centered">
+            <audio id="player_1" controls loop>
+                <source v-bind:src="songs[0]['preview_url']" type="audio/mpeg"/>
+            </audio>
+        </div>
+    </div>
+    <div class="column is-one-third">
+        <div class="columns">
+            <div class="column is-half">
+                <div class = "container block">
+                    <div class="box">
+					    <div><a target="_blank" :href="songs[0].external_urls.spotify"><strong>{{songs[0].name}}</strong></a></div>
+                        <div><a target="_blank" :href="songs[0].album.external_urls.spotify"><small>{{songs[0].album.name}}</small></a></div>
+                        <div><a target="_blank" :href="songs[0].artists[0].external_urls.spotify">{{songs[0].artists[0].name}}</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-half">
+                <div class = "container block">
+                    <div class="box">
+                        <div style="text-align:right;"><a target="_blank" :href="songs[1].external_urls.spotify"><strong>{{songs[1].name}}</strong></a></div>
+                        <div style="text-align:right;"><a target="_blank" :href="songs[1].album.external_urls.spotify"><small>{{songs[1].album.name}}</small></a></div>
+                        <div style="text-align:right;"><a target="_blank" :href="songs[1].artists[0].external_urls.spotify">{{songs[1].artists[0].name}}</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="columns is-centered">
+            <img src="https://media2.giphy.com/media/l4pTkNEd2P4MWo9iw/giphy.gif?cid=790b76117a4c999044aa23e8eb029c1542e50e41f2aa3e1b&rid=giphy.gif&ct=s">
+        </div>
+    </div>
+    <div class="column is-one-third">
+        <div class="columns is-centered" @mouseover="play('player_2', 'album_2', 'album_1')" @mouseout="stop('player_2', 'album_2', 'album_1')" @click="choose(songs[1].href)">
+            <img style="transition-duration: 0.5s; cursor: pointer;" id="album_2" v-bind:src="songs[1]['album']['images'][0]['url']">
+        </div>
+        <div class="columns is-centered">
+            <audio id="player_2" controls loop>
+                <source v-bind:src="songs[1]['preview_url']" type="audio/mpeg"/>
+            </audio>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="body" id="rec" hidden>
+<div class="section">
+<div class="columns">
+    <div class="column is-one-thirds">
+	  <div class="container block">
+		<!-- <div class="container block"> -->
+		<!-- <div class="form"> -->
+		  <!-- <div class="field"> -->
+			<!-- <div class="control"> -->
+			  <!-- <input type="submit" @click="get_recomended()" value="Most Recent" class="button is-primary"> -->
+			  <!-- <input type="submit" @click="" value="Random" class="button is-danger"> -->
+			<!-- </div> -->
+		  <!-- </div> -->
+		<!-- </div> -->
+		<!-- </div> -->
+
+		<p class="mb-4"></p>
+
+		<div v-for="r in recomended_songs" class="box">
+		  <div class="columns">
+		  <div class="column is-narrow">
+			<img :src="r['album']['images'][2]['url']">
+		  </div>
+		  <div class="column">
+			<div><a target="_blank" :href="r.external_urls.spotify"><strong>{{r.name}}</strong></a></div>
+			<div><a target="_blank" :href="r.album.external_urls.spotify"><small>{{r.album.name}}</small></a></div>
+			<div><a target="_blank" :href="r.artists[0].external_urls.spotify">{{r.artists[0].name}}</a></div>
+		  </div>
+		  <!-- <div class="column"> -->
+			  <!-- <div><strong>Battles: {{r.battles}}</strong></div> -->
+			  <!-- <div><small>Points: {{r.points}}</small></div> -->
+		  <!-- </div> -->
+		  <div class="column">
+			<audio id="player_r" controls="controls" loop>
+				<source :src="r['preview_url']" type="audio/mpeg"/>
+			</audio>
+		  <!-- </div> -->
+		  <!-- <div class="column is-narrow"> -->
+			<!-- <button v-if="visitor === profile" @click="delete_song(r._idx)" class="button is-pulled-right"> -->
+			<!-- <i class="fa fa-trash"></i></button> -->
+		  <!-- </div> -->
+		  <!-- </div> -->
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!-- <div class="column is-one-third">  -->
+		<!-- <div class="container block"> -->
+			<!-- yeah -->
+		<!-- </div> -->
+	<!-- </div> -->
+</div>
+</div>
+</div>
+
+</div> <!-- v target and cloak -->
+
+<script>
+function toggleThunder(){
+	var t = document.getElementById("dome");
+	
+	if(t.getAttribute("hidden")){
+		t.removeAttribute("hidden");
+		document.getElementById("rec").setAttribute("hidden", "hidden");
+	}
+}
+
+function toggleRec(){
+	var t = document.getElementById("dome");
+	
+	if(!t.getAttribute("hidden")){
+		t.setAttribute("hidden", "hidden");
+		document.getElementById("rec").removeAttribute("hidden");
+	}
+}
+</script>
+
+<!-- <script src="js/sugar.min.js"></script> -->
+<script src="js/axios.min.js"></script>
+<script src="js/vue.js"></script>
+<!-- <script src="js/utils.js"></script> -->
+
+<script src="json/playlist.json"></script>
+<script src="js/thunderdome.js"></script>
+
+</html>

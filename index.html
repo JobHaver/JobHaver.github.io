@@ -1,189 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
-<style>
-[v-cloak] {
-     display: none;
-}
-
-html, body {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  background-image: url("https://cdn.discordapp.com/attachments/829110971049574432/1100316393125183549/b5.jpg");
-  <!-- background-image: url("https://cdn.discordapp.com/attachments/257282783980814336/1086147140407005265/zWkSvj.jpg"); -->
-    
-  <!-- background-size: cover; -->
-  <!-- background-blend-mode: color; -->
-  <!-- overflow: hidden; -->
-}
-</style>
+<html lang="en" style="overflow: auto; overflow-x: hidden;">
+<!-- overflow x is a temp fix for columns -->
 
 <head>
-	<title>Thunderdome</title>
-	<link rel="icon" href="https://cdn.discordapp.com/attachments/829110971049574432/1087863554738241556/thunderhead3.png">
+	<title>Jonderdome</title>
+	<link rel="icon" href="https://cdn.discordapp.com/attachments/829110971049574432/1128602790252531712/just_like_me.png">
 
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
 	<link rel="stylesheet" href="css/bulma.css">
+	<link rel="stylesheet" href="css/index.css">
 	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
 </head>
+
 <body>
-	<!-- Navigation bar -->
-	<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
-	  <div class="navbar-brand">
-		<a class="navbar-item" onclick="toggleThunder()">
-		  <img src="https://media.discordapp.net/attachments/829110971049574432/850510009397149706/td6.PNG">
-		  <!-- <img class="logo" width="150" src="images/site_icon.png"> -->
-		</a>
-		<!-- <a class="navbar-item" onclick="toggleRec()"> -->
-			<!-- Recommendations -->
-		<!-- </a> -->
-	  </div>
-	</nav>
-</body>
+<!-- temporary fix, viewport, will fix phone dimentions at later time -->
+<meta name="viewport" content="width=720">
 
-<div id="vue-target" v-if="cloak">
-
-<div class="body" id="dome">
-<div class="section">
-<!-- <div id="vue-target" class="section" v-if="cloak"> -->
-<div class="columns">
-    <div class="column is-one-third">
-        <div class="columns is-centered" @mouseover="play('player_1', 'album_1', 'album_2')" @mouseout="stop('player_1', 'album_1', 'album_2')" @click="choose(songs[0].href)">
-            <img style="transition-duration: 0.5s;" id="album_1" v-bind:src="songs[0]['album']['images'][0]['url']">
-        </div>
-        <div class="columns is-centered">
-            <audio id="player_1" controls loop>
-                <source v-bind:src="songs[0]['preview_url']" type="audio/mpeg"/>
-            </audio>
-        </div>
-    </div>
-    <div class="column is-one-third">
-        <div class="columns">
-            <div class="column is-half">
-                <div class = "container block">
-                    <div class="box">
-					    <div><a target="_blank" :href="songs[0].external_urls.spotify"><strong>{{songs[0].name}}</strong></a></div>
-                        <div><a target="_blank" :href="songs[0].album.external_urls.spotify"><small>{{songs[0].album.name}}</small></a></div>
-                        <div><a target="_blank" :href="songs[0].artists[0].external_urls.spotify">{{songs[0].artists[0].name}}</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="column is-half">
-                <div class = "container block">
-                    <div class="box">
-                        <div style="text-align:right;"><a target="_blank" :href="songs[1].external_urls.spotify"><strong>{{songs[1].name}}</strong></a></div>
-                        <div style="text-align:right;"><a target="_blank" :href="songs[1].album.external_urls.spotify"><small>{{songs[1].album.name}}</small></a></div>
-                        <div style="text-align:right;"><a target="_blank" :href="songs[1].artists[0].external_urls.spotify">{{songs[1].artists[0].name}}</a></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="columns is-centered">
-            <img src="https://media2.giphy.com/media/l4pTkNEd2P4MWo9iw/giphy.gif?cid=790b76117a4c999044aa23e8eb029c1542e50e41f2aa3e1b&rid=giphy.gif&ct=s">
-        </div>
-    </div>
-    <div class="column is-one-third">
-        <div class="columns is-centered" @mouseover="play('player_2', 'album_2', 'album_1')" @mouseout="stop('player_2', 'album_2', 'album_1')" @click="choose(songs[1].href)">
-            <img style="transition-duration: 0.5s;" id="album_2" v-bind:src="songs[1]['album']['images'][0]['url']">
-        </div>
-        <div class="columns is-centered">
-            <audio id="player_2" controls loop>
-                <source v-bind:src="songs[1]['preview_url']" type="audio/mpeg"/>
-            </audio>
-        </div>
-    </div>
-</div>
+<div class="parent">
+<div class="child">
+	<a href="https://www.linkedin.com/in/jonathan-brubaker-885693185/" style="color: inherit;">
+	<span class="letter">J O N A T H A N</span>
+	<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+	<span class="letter">B R U B A K E R</span>
+	</a>
 </div>
 </div>
 
-<div class="body" id="rec" hidden>
-<div class="section">
-<div class="columns">
-    <div class="column is-one-thirds">
-	  <div class="container block">
-		<!-- <div class="container block"> -->
-		<!-- <div class="form"> -->
-		  <!-- <div class="field"> -->
-			<!-- <div class="control"> -->
-			  <!-- <input type="submit" @click="get_recomended()" value="Most Recent" class="button is-primary"> -->
-			  <!-- <input type="submit" @click="" value="Random" class="button is-danger"> -->
-			<!-- </div> -->
-		  <!-- </div> -->
-		<!-- </div> -->
-		<!-- </div> -->
+<div class="iconParent">
+<div class="iconChild">
+	<a href="mailto: cajhbru@gmail.com">
+		<span><img class="icons" src="icons/email.png"></span>
+	</a>
+	<a href="https://github.com/JobHaver">
+		<span><img class="icons" src="icons/github-mark.svg"></span>
+	</a>
+	<a href="https://www.linkedin.com/in/jonathan-brubaker-885693185/">
+		<span><img class="icons" src="icons/li.png"></span>
+	</a>
 
-		<p class="mb-4"></p>
+</div>
+</div>
 
-		<div v-for="r in recomended_songs" class="box">
-		  <div class="columns">
-		  <div class="column is-narrow">
-			<img :src="r['album']['images'][2]['url']">
-		  </div>
-		  <div class="column">
-			<div><a target="_blank" :href="r.external_urls.spotify"><strong>{{r.name}}</strong></a></div>
-			<div><a target="_blank" :href="r.album.external_urls.spotify"><small>{{r.album.name}}</small></a></div>
-			<div><a target="_blank" :href="r.artists[0].external_urls.spotify">{{r.artists[0].name}}</a></div>
-		  </div>
-		  <!-- <div class="column"> -->
-			  <!-- <div><strong>Battles: {{r.battles}}</strong></div> -->
-			  <!-- <div><small>Points: {{r.points}}</small></div> -->
-		  <!-- </div> -->
-		  <div class="column">
-			<audio id="player_r" controls="controls" loop>
-				<source :src="r['preview_url']" type="audio/mpeg"/>
-			</audio>
-		  <!-- </div> -->
-		  <!-- <div class="column is-narrow"> -->
-			<!-- <button v-if="visitor === profile" @click="delete_song(r._idx)" class="button is-pulled-right"> -->
-			<!-- <i class="fa fa-trash"></i></button> -->
-		  <!-- </div> -->
-		  <!-- </div> -->
+<!-- <div sytle="padding: 20px;"> -->
+<div class="columns is-multiline is-variable is-8" style="padding: 30px;">
+	<div class="column is-one-third">
+		<a href="https://github.com/JobHaver/card-game">
+			<div class="box" style="position:relative;">
+				<div class="hiddenInfo">
+					<div><b>Untitled Card Game</b></div>
+					<i style="color: dodgerblue;">C#, Unity, C++ (old)</i>
+					<ol style="list-style-type: square; padding: 20px;">
+						<li>Lead developer on this project</li>
+						<li>Old C++ version currently viewable on github</li>
+						<li>It's done when it's done (ETA: 1 month)</li>
+					</ol>
+				</div>
+				<img class="coverImg" src="https://cdn.discordapp.com/attachments/829110971049574432/1130644357289103471/math_goblin_1.png">
 			</div>
-		  </div>
-		</div>
-	  </div>
+		</a>
 	</div>
-	<!-- <div class="column is-one-third">  -->
-		<!-- <div class="container block"> -->
-			<!-- yeah -->
-		<!-- </div> -->
-	<!-- </div> -->
+	<div class="column is-one-third">
+		<a href="thunderdome.html">
+			<div class="box" style="position:relative;">
+				<div class="hiddenInfo">
+					<div><b>Thunder Dome</b></div>
+					<i style="color: dodgerblue;">python, py4web, spotipy, html, css, JS, vue.js, OAuth 2.0</i>
+					<ol style="list-style-type: square; padding: 20px;">
+						<li>Music battle website, embedded URL is new single user static version that generates recomendations (WIP)</li>
+						<li>Tracked user uploaded tracks, albums and all other relevant information in GCP</li>
+						<li>Populated leaderboard of most chosen users using point value generated from music battle results</li>
+					</ol>
+				</div>
+				<img class="coverImg" src="https://cdn.discordapp.com/attachments/829110971049574432/1128828578004476044/bambi.PNG">
+			</div>
+		</a>
+	</div>
+	<div class="column is-one-third">
+		<a href="https://github.com/JobHaver/leetCode">
+			<div class="box" style="position:relative;">
+				<div class="hiddenInfo">
+					<div><b>LeetCode daily answers</b></div>
+					<i style="color: dodgerblue;">C++</i>
+					<ol style="list-style-type: square; padding: 20px;">
+						<li>Over 100 unique answers to daily questions</li>
+						<li>Most answers beat 80%+ of other answers runtime</li>
+					</ol>
+				</div>
+				<img class="coverImg" src="https://cdn.discordapp.com/attachments/829110971049574432/1130651259192496158/leetcode_bet.PNG">
+			</div>
+		</a>
+	</div>
+	<!-- <div class="column is-one-third"><div class ="container block" style="transition-duration: 0.5s;"><a href="thunderdome.html"><div class="box"><div style="text-align:center;">Thunder Dome</div></div></a></div></div> -->
 </div>
-</div>
-</div>
+<!-- </div> -->
 
-</div> <!-- v target and cloak -->
-
-<script>
-function toggleThunder(){
-	var t = document.getElementById("dome");
-	
-	if(t.getAttribute("hidden")){
-		t.removeAttribute("hidden");
-		document.getElementById("rec").setAttribute("hidden", "hidden");
-	}
-}
-
-function toggleRec(){
-	var t = document.getElementById("dome");
-	
-	if(!t.getAttribute("hidden")){
-		t.setAttribute("hidden", "hidden");
-		document.getElementById("rec").removeAttribute("hidden");
-	}
-}
-</script>
-
-<!-- <script src="js/sugar.min.js"></script> -->
-<script src="js/axios.min.js"></script>
-<script src="js/vue.js"></script>
-<!-- <script src="js/utils.js"></script> -->
-
-<script src="json/playlist.json"></script>
-<script src="js/index.js"></script>
-
-</html>
+</body>
+</html lang="en">
