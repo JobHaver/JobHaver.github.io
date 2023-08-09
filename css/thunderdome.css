@@ -1,0 +1,31 @@
+[v-cloak] {
+     display: none;
+}
+
+html{
+	transition-duration: 0.5s;
+	background-color: blanchedalmond;
+  /* background-image: url("https://img.freepik.com/premium-vector/seamless-repeating-pattern-birds_209002-67.jpg?w=1000"); */
+}
+
+body {
+  margin: 0;
+  /* backgroun-color: blanchedalmond; */
+  /* background-image: url("https://img.freepik.com/premium-vector/seamless-repeating-pattern-birds_209002-67.jpg?w=1000"); */
+  /* background-image: url("https://cdn.discordapp.com/attachments/257282783980814336/1086147140407005265/zWkSvj.jpg"); */
+    
+  /* background-size: cover; */
+  /* background-blend-mode: color; */
+  /* overflow: hidden; */
+}
+  
+.albumArt{
+	transition-duration: 0.5s;
+	cursor: pointer;
+	filter: grayscale(1);
+}
+
+.albumArt:hover{
+	filter: grayscale(0);
+	transform: scale(1.03);
+}
