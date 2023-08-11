@@ -13,7 +13,9 @@ app.data = {
 	token: 0,
 	chosen_songs: [],
 	cloak: false,
-	canvas: document.createElement('canvas')
+	canvas: document.createElement('canvas'),
+	genres: [],
+	chosen_genres: []
 };
 
 //1138
@@ -25,6 +27,59 @@ app.data = {
 // return _checkParamsAndPerformRequest(requestData, options, callback);
 // };
 
+get_genres = () => {
+	var url = 'https://api.spotify.com/v1/recommendations/available-genre-seeds';
+	var request = url;
+	
+	axios.get(request, {
+		headers: { 'Authorization' : 'Bearer ' + app.data.token}
+	}).then((result) => {
+		// console.log(result.data.genres);
+		app.data.genres = result.data.genres;
+	})
+};
+
+load_recomended = () => {
+	var song1 = app.data.recomended_songs.shift();
+	while(song1.preview_url == null){
+		song1 = app.data.recomended_songs.shift();
+	}
+	var song2 = app.data.recomended_songs.shift();
+	while(song2.preview_url == null){
+		song2 = app.data.recomended_songs.shift();
+	}
+	app.data.songs = [song1, song2];
+	app.data.cloak = true;
+	document.getElementById("player_1").load();
+	document.getElementById("player_2").load();
+}
+
+get_recomended_genres = () => {
+	var cg_length = app.data.chosen_genres.length;
+	if(!cg_length){
+		return;
+	}
+	
+	var url = 'https://api.spotify.com/v1/recommendations/';
+	var seed_genres = '?seed_genres=';
+	var market = '&market=US';
+	
+	for(let i = 0; i < cg_length; i++){
+		seed_genres += app.data.chosen_genres[i] + ',';
+	}
+	
+	var request = url + seed_genres + market;
+	
+	axios.get(request, {
+		headers: { 'Authorization' : 'Bearer ' + app.data.token}
+	}).then((result) => {
+		app.data.recomended_songs = result.data.tracks;
+		load_recomended();
+		toggleElement("dome");
+		document.getElementById("dome_nav").style.display = "flex";//needs to be flex because of bulma
+	})
+};
+
 get_recomended = () => {
 	if(!app.data.chosen_songs.length){
 		return;
@@ -34,16 +89,9 @@ get_recomended = () => {
 	var seed_tracks = '?seed_tracks=';
 	var market = '&market=US';
 	
-	if(app.data.chosen_songs.length < 5){
-		for (let i = 0; i < app.data.chosen_songs.length; i++) {
-		  seed_tracks += app.data.chosen_songs[i] + ',';
-		}
-	}
-	else{
-		for (let i = 0; i < 5; i++){
-		  seed_tracks += app.data.chosen_songs[app.data.chosen_songs.length - (1 + i)] + ',';
-		}
-		// console.log(seed_tracks);
+	var cs_length = app.data.chosen_songs.length;
+	for (let i = 0; i < 5 && i < cs_length; i++){
+		seed_tracks += app.data.chosen_songs[cs_length - (1 + i)].href.slice(34) + ',';
 	}
 	
 	var request = url + seed_tracks + market;
@@ -87,13 +135,14 @@ play = (player, albumA, albumB) => {
 	canvas.width = img.width; // these two needed so it doesnt glitch out
 	canvas.height = img.height;
 	context.drawImage(img, 0, 0);
+	
 	var p = context.getImageData(getRandomInt(img.width), getRandomInt(img.height), 1, 1).data;
 	var hex = '#' + p[0].toString(16) + p[1].toString(16) + p[2].toString(16);
 	// console.log("x: " + x + " y: " + y + " hex: " + hex + " p: " + p);
-	//console.log(" hex: " + hex + " p: " + p);
-	//DocumentElement is HTML
+	// console.log(" hex: " + hex + " p: " + p);
+	
 	if(p[3]){ //need to do this bc p does not work the first time, also error handeling
-		document.documentElement.style.backgroundColor = hex;
+		document.documentElement.style.backgroundColor = hex;//DocumentElement is HTML
 	}
 	
 	document.getElementById(player).play();
@@ -109,9 +158,8 @@ stop = (player, albumA, albumB) => {
 };
 
 choose = (chosen) => {
-	chosen = chosen.slice(34);
-	// console.log(chosen);
-	app.data.chosen_songs.push(chosen);
+	app.data.chosen_songs.push(chosen); //chosen is full song
+	document.getElementById("chosen_nav").style.display = "flex";//needs to be flex because of bulma
 	
 	// console.log(app.data.chosen_songs.length);
 	if(app.data.chosen_songs.length % 5 == 0){
@@ -119,33 +167,44 @@ choose = (chosen) => {
 		// document.getElementById("rec_nav").style.display = "flex";//needs to be flex because of bulma
 	}
 	
-	if(app.data.chosen_songs.length > 5){
-		// console.log(app.data.recomended_songs.length);
-		var song1 = app.data.recomended_songs.shift();
-		while(song1.preview_url == null){
-			song1 = app.data.recomended_songs.shift();
-		}
-		var song2 = app.data.recomended_songs.shift();
-		while(song2.preview_url == null){
-			song2 = app.data.recomended_songs.shift();
-		}
-		app.data.songs = [song1, song2];
-		app.data.cloak = true;
-		document.getElementById("player_1").load();
-		document.getElementById("player_2").load();
+	// console.log(app.data.recomended_songs.length);
+	if(app.data.recomended_songs.length > 5){
+		load_recomended();
 	}
 	else{
-		get_tracks();
+		get_tracks(); //just in case of failure
 	}
 };
 
-// We form the dictionary of all methods, so we can assign them
-// to the Vue app in a single blow.
+default_playlsit = () => {
+	toggleElement("dome");
+	document.getElementById("dome_nav").style.display = "flex";//needs to be flex because of bulma
+};
+
+click_genre = (genre) => {
+	const index = app.data.chosen_genres.indexOf(genre);
+	var elem = document.getElementById(genre);
+	var atMax = app.data.chosen_genres.length >= 5;
+	
+	if(index > -1){
+		app.data.chosen_genres.splice(index, 1);
+		elem.style.backgroundColor = "#363636";
+	}
+	else if(!atMax){
+		app.data.chosen_genres.push(elem.id);
+		elem.style.backgroundColor = "#6ec45a";
+	}
+};
+
+// We form the dictionary of all methods, so we can assign them to the Vue app.
 app.methods = {
 	play: play,
 	stop: stop,
 	choose: choose,
 	get_recomended: get_recomended,
+	default_playlsit: default_playlsit,
+	click_genre: click_genre,
+	get_recomended_genres: get_recomended_genres
 };
 
 // This creates the Vue instance.
@@ -187,14 +246,14 @@ app.init = async () => {
 	app.data.playlist = JSON.parse(playlist);
 	
 	get_tracks();
+	get_genres();//test genres
 };
 
 app.init();
 
 //non vue js funcs
-
 function hideAll(){
-	const list = ["dome", "rec"];
+	const list = ["dome", "rec", "chosen", "but"];
 	
 	for(let i = 0; i < list.length; i++){
 		document.getElementById(list[i]).setAttribute("hidden", "hidden");

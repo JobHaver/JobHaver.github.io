@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="overflow: auto;">
+<html lang="en" style="overflow: auto;" class="has-navbar-fixed-top">
 
 <head>
 	<title>Thunderdome</title>
@@ -14,26 +14,43 @@
 </head>
 <!-- <body> -->
 <!-- Navigation bar -->
-<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
-  <!-- <div class="navbar-brand"> -->
-	<!-- <a class="navbar-item" onclick="toggleElement('dome')"> -->
-	  <!-- <img src="https://media.discordapp.net/attachments/829110971049574432/850510009397149706/td6.PNG"> -->
-	<!-- </a> -->
+<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+	<a class="navbar-item" style="display: none;" id="dome_nav" onclick="toggleElement('dome')">
+	  <img src="https://media.discordapp.net/attachments/829110971049574432/850510009397149706/td6.PNG">
+	</a>
+	<a class="navbar-item" style="display: none;" id="chosen_nav" onclick="toggleElement('chosen')">
+		Chosen
+	</a>
+	<!-- to make this work toggle comment in choose thunderdome.js -->
 	<!-- <a class="navbar-item" style="display: none;" id="rec_nav" onclick="toggleElement('rec')"> -->
 		<!-- Recommendations -->
 	<!-- </a> -->
-  <!-- </div> -->
+  </div>
 </nav>
 <!-- </body> -->
 
 <div id="vue-target" v-if="cloak">
 
-<div class="body" id="dome">
+<div class="body" id="but">
+<div class="section" align="center">
+<!-- <div class="buttons"></div> -->
+	<div>
+		<button class="genreButton" @click="get_recomended_genres()">Choose {{5 - chosen_genres.length}} More Genres</button>
+		<button class="genreButton" @click="default_playlsit()">Use Default Playlist</button>
+	</div>
+	<span v-for="r in genres">
+		<button class="genreButton" :id="r" @click="click_genre(r)">{{r}}</button>
+	</span>
+</div>
+</div>
+
+<div class="body" id="dome" hidden>
 <div class="section">
 <!-- <div id="vue-target" class="section" v-if="cloak"> -->
 <div class="columns">
     <div class="column is-one-third">
-        <div class="columns is-centered" @mouseover="play('player_1', 'album_1', 'album_2')" @mouseout="stop('player_1', 'album_1', 'album_2')" @click="choose(songs[0].href)">
+        <div class="columns is-centered" @mouseover="play('player_1', 'album_1', 'album_2')" @mouseout="stop('player_1', 'album_1', 'album_2')" @click="choose(songs[0])">
             <img class="albumArt" id="album_1" v-bind:src="songs[0]['album']['images'][0]['url']">
 		</div>
         <div class="columns is-centered">
@@ -68,7 +85,7 @@
         </div>
     </div>
     <div class="column is-one-third">
-        <div class="columns is-centered" @mouseover="play('player_2', 'album_2', 'album_1')" @mouseout="stop('player_2', 'album_2', 'album_1')" @click="choose(songs[1].href)">
+        <div class="columns is-centered" @mouseover="play('player_2', 'album_2', 'album_1')" @mouseout="stop('player_2', 'album_2', 'album_1')" @click="choose(songs[1])">
             <img class="albumArt" id="album_2" v-bind:src="songs[1]['album']['images'][0]['url']">
         </div>
         <div class="columns is-centered">
@@ -77,6 +94,36 @@
             </audio>
         </div>
     </div>
+</div>
+</div>
+</div>
+
+<div class="body" id="chosen" hidden>
+<div class="section">
+<div class="columns">
+    <div class="column is-one-thirds">
+	  <div class="container block">
+		<p class="mb-4"></p>
+
+		<div v-for="r in chosen_songs" class="box">
+		  <div class="columns">
+		  <div class="column is-narrow">
+			<img :src="r['album']['images'][2]['url']">
+		  </div>
+		  <div class="column">
+			<div><a target="_blank" :href="r.external_urls.spotify"><strong>{{r.name}}</strong></a></div>
+			<div><a target="_blank" :href="r.album.external_urls.spotify"><small>{{r.album.name}}</small></a></div>
+			<div><a target="_blank" :href="r.artists[0].external_urls.spotify">{{r.artists[0].name}}</a></div>
+		  </div>
+		  <div class="column">
+			<audio id="player_r" controls="controls" loop>
+				<source :src="r['preview_url']" type="audio/mpeg"/>
+			</audio>
+		  </div>
+		  </div>
+		</div>
+	  </div>
+	</div>
 </div>
 </div>
 </div>

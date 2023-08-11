@@ -29,3 +29,21 @@ body {
 	filter: grayscale(0);
 	transform: scale(1.03);
 }
+
+.genreButton{
+	cursor: pointer;
+	text-transform: uppercase;
+	border: 1px solid #333;
+	margin: 0 0 10px 10px;
+	color: #fff;
+	font-size: 20px;
+	text-decoration: none;
+	background: #363636;
+	padding: 0.5em;
+	transition-duration: 0.5s;
+}
+
+.genreButton:hover{
+	transform: scale(1.10);
+	background: #6ec45a;
+}
