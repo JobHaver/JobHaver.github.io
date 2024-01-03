@@ -32,12 +32,25 @@
 
 <div id="vue-target" v-if="cloak">
 
-<div class="body" id="but">
+<div class="body" id="menu">
+<div class="section" align="center">
+	<div>
+		<button class="genreButton" @click="default_playlsit()">Use Default Playlist</button>
+	</div>
+	<div>
+		<button class="genreButton" onclick="toggleElement('genres')">Choose From Genres</button>
+	</div>
+	<!-- <div> -->
+		<!-- <button class="genreButton" onclick="toggleElement('genres')">Use Songs</button> -->
+	<!-- </div> -->
+</div>
+</div>
+
+<div class="body" id="genres" hidden>
 <div class="section" align="center">
 <!-- <div class="buttons"></div> -->
 	<div>
-		<button class="genreButton" @click="get_recomended_genres()">Choose {{5 - chosen_genres.length}} More Genres</button>
-		<button class="genreButton" @click="default_playlsit()">Use Default Playlist</button>
+		<button class="genreButton" @click="get_recomended_genres()">Start!</button>	
 	</div>
 	<span v-for="r in genres">
 		<button class="genreButton" :id="r" @click="click_genre(r)">{{r}}</button>

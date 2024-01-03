@@ -18,27 +18,6 @@ app.data = {
 	chosen_genres: []
 };
 
-//1138
-// Constr.prototype.getTracks = function (trackIds, options, callback) {
-// var requestData = {
-  // url: _baseUri + '/tracks/',
-  // params: { ids: trackIds.join(',') }
-// };
-// return _checkParamsAndPerformRequest(requestData, options, callback);
-// };
-
-get_genres = () => {
-	var url = 'https://api.spotify.com/v1/recommendations/available-genre-seeds';
-	var request = url;
-	
-	axios.get(request, {
-		headers: { 'Authorization' : 'Bearer ' + app.data.token}
-	}).then((result) => {
-		// console.log(result.data.genres);
-		app.data.genres = result.data.genres;
-	})
-};
-
 load_recomended = () => {
 	var song1 = app.data.recomended_songs.shift();
 	while(song1.preview_url == null){
@@ -53,6 +32,17 @@ load_recomended = () => {
 	document.getElementById("player_1").load();
 	document.getElementById("player_2").load();
 }
+
+get_genres = () => {
+	var url = 'https://api.spotify.com/v1/recommendations/available-genre-seeds';
+	var request = url;
+	
+	axios.get(request, {
+		headers: { 'Authorization' : 'Bearer ' + app.data.token}
+	}).then((result) => {
+		app.data.genres = result.data.genres;
+	})
+};
 
 get_recomended_genres = () => {
 	var cg_length = app.data.chosen_genres.length;
@@ -99,8 +89,35 @@ get_recomended = () => {
 	axios.get(request, {
 		headers: { 'Authorization' : 'Bearer ' + app.data.token}
 	}).then((result) => {
-		// console.log(result);
 		app.data.recomended_songs = result.data.tracks;
+	})
+};
+
+get_playlist = (playlistUrl) => {
+	var lastSlash = -1;
+	for(var i = 0; i < playlistUrl.length; i++){
+		if(playlistUrl[i] == '/')
+			lastSlash = i;
+	}
+	
+	var request = "https://api.spotify.com/v1/playlists/" + playlistUrl.slice(lastSlash + 1) + "/tracks/" + '?limit=100' + '&market=US';
+	
+	axios.get(request, {
+		headers: { 'Authorization' : 'Bearer ' + app.data.token}
+	}).then((result) => { //realized there was no reason to load full thing just for 5 songs
+		if(result.status != 200 || result.data.tracks.items < 20)//or if data has less than 20
+			return;
+		
+		app.data.playlist = [];
+		var tracks = result.data.tracks.items;
+		for(var i = 0; i < tracks.length; i++){
+			if(tracks[i].track.preview_url)
+				app.data.playlist.push(tracks[i].track.id);
+		}
+		
+		get_tracks();
+		toggleElement("dome");
+		document.getElementById("dome_nav").style.display = "flex";//needs to be flex because of bulma
 	})
 };
 
@@ -127,7 +144,6 @@ get_tracks = () => {
 };
 
 play = (player, albumA, albumB) => {
-	//var canvas = document.createElement('canvas');
 	var canvas = app.data.canvas;
 	var context = canvas.getContext('2d');
 	var img = document.getElementById(albumA);
@@ -138,36 +154,26 @@ play = (player, albumA, albumB) => {
 	
 	var p = context.getImageData(getRandomInt(img.width), getRandomInt(img.height), 1, 1).data;
 	var hex = '#' + p[0].toString(16) + p[1].toString(16) + p[2].toString(16);
-	// console.log("x: " + x + " y: " + y + " hex: " + hex + " p: " + p);
-	// console.log(" hex: " + hex + " p: " + p);
 	
 	if(p[3]){ //need to do this bc p does not work the first time, also error handeling
 		document.documentElement.style.backgroundColor = hex;//DocumentElement is HTML
 	}
 	
 	document.getElementById(player).play();
-	// document.getElementById(albumB).style.filter = 'grayscale(1)';
-	// document.getElementById(albumA).style.transform = 'scale(1.03)';
 };
 
 stop = (player, albumA, albumB) => {
-	// document.documentElement.style.backgroundColor = "#FFEBCD";
 	document.getElementById(player).pause();
-	// document.getElementById(albumB).style.filter = 'grayscale(0)';
-	// document.getElementById(albumA).style.transform = 'scale(1)';
 };
 
 choose = (chosen) => {
 	app.data.chosen_songs.push(chosen); //chosen is full song
 	document.getElementById("chosen_nav").style.display = "flex";//needs to be flex because of bulma
 	
-	// console.log(app.data.chosen_songs.length);
 	if(app.data.chosen_songs.length % 5 == 0){
 		get_recomended();
-		// document.getElementById("rec_nav").style.display = "flex";//needs to be flex because of bulma
 	}
 	
-	// console.log(app.data.recomended_songs.length);
 	if(app.data.recomended_songs.length > 5){
 		load_recomended();
 	}
@@ -177,8 +183,10 @@ choose = (chosen) => {
 };
 
 default_playlsit = () => {
-	toggleElement("dome");
-	document.getElementById("dome_nav").style.display = "flex";//needs to be flex because of bulma
+	get_playlist('https://open.spotify.com/playlist/7gdMeXmFjJ4pubLBFSYJCn?si=bde6b1ba4a284a70');
+	//toggleElement("dome");
+	//document.getElementById("dome_nav").style.display = "flex";//needs to be flex because of bulma
+	//console.log(app.data.playlist);
 };
 
 click_genre = (genre) => {
@@ -196,7 +204,6 @@ click_genre = (genre) => {
 	}
 };
 
-// We form the dictionary of all methods, so we can assign them to the Vue app.
 app.methods = {
 	play: play,
 	stop: stop,
@@ -204,28 +211,16 @@ app.methods = {
 	get_recomended: get_recomended,
 	default_playlsit: default_playlsit,
 	click_genre: click_genre,
-	get_recomended_genres: get_recomended_genres
+	get_recomended_genres: get_recomended_genres,
+	get_playlist : get_playlist
 };
 
-// This creates the Vue instance.
 app.vue = new Vue({
 	el: "#vue-target",
 	data: app.data,
-	methods: app.methods,
-	// mounted: function (){
-		// document.onreadystatechange = () => {
-			// if (document.readyState == "complete") {
-				// document.getElementById("player_1").volume = 0.5;
-				// document.getElementById("player_2").volume = 0.5;
-			// }
-		// }
-	// }
+	methods: app.methods
 });
 
-// And this initializes it.
-// Generally, this will be a network call to the server to
-// load the data.
-// For the moment, we 'load' the data from a string.
 app.init = async () => {
 	clientId = '1d6c8601b56b4a77bc332a0c041878a0';
 	clientSecret = '5179fc9dda60495c80be781b75cf6ec9';
@@ -241,19 +236,18 @@ app.init = async () => {
 	
 	data = await result.json();
 	app.data.token = data.access_token;
-	// console.log('Token: ' + app.data.token);
 	
 	app.data.playlist = JSON.parse(playlist);
 	
 	get_tracks();
-	get_genres();//test genres
+	get_genres();
 };
 
 app.init();
 
 //non vue js funcs
 function hideAll(){
-	const list = ["dome", "rec", "chosen", "but"];
+	const list = ["dome", "rec", "chosen", "genres", "menu"];
 	
 	for(let i = 0; i < list.length; i++){
 		document.getElementById(list[i]).setAttribute("hidden", "hidden");
