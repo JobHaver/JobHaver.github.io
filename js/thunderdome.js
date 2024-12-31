@@ -223,7 +223,7 @@ app.vue = new Vue({
 
 app.init = async () => {
 	clientId = '1d6c8601b56b4a77bc332a0c041878a0';
-	clientSecret = '5179fc9dda60495c80be781b75cf6ec9';
+	clientSecret = '3c4ac66db58f4651bb876d05ad880d05';
 	
 	result = await fetch('https://accounts.spotify.com/api/token', {
 		method: 'POST',
