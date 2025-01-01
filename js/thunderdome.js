@@ -125,7 +125,7 @@ get_tracks = () => {
 	song1_url = app.data.playlist[getRandomInt(app.data.playlist.length)];
 	song2_url = app.data.playlist[getRandomInt(app.data.playlist.length)];
 	
-	while(song1_url == song2_url){
+	while(song1_url != undefined && song2_url != undefined && song1_url == song2_url){
 		song2_url = app.data.playlist[getRandomInt(app.data.playlist.length)];
 	}
 	
