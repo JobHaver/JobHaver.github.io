@@ -1,0 +1,95 @@
+<!-- This is supposed to look bad -->
+
+<style>
+iframe[seamless] {
+    border: none;
+}
+
+iframe {
+	width:100%;
+	height:100vh;
+}
+
+body { 
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  background-color:rgb(52, 53, 54);
+  width:100%;
+  height:100vh;
+}
+
+.third{
+   width: 31%; 
+   float: left; 
+}
+
+img{
+	width:200px;
+	height:100px;
+}
+
+
+</style>
+
+<body>
+	<iframe class="third" id="character" seamless></iframe>
+	
+	<iframe class="third" id="team" seamless></iframe>
+
+	<div class="third" align="center">
+		<div>
+			<span style="font-size:50px;">General Rulez</span>
+		</div>
+		<div>If Caboose has not been rolled and you are the last person to role you are Caboose.</div>
+		
+		<img src="https://media.tenor.com/k4BTPWNzmcEAAAAi/party-beer.gif">
+		<span style="font-size:40px;">Drink</span>
+		<img src="https://media.tenor.com/k4BTPWNzmcEAAAAi/party-beer.gif">
+		
+		<ul style="width:400;font-size:20px;" align="left">
+			<li>back of my ~blank~</li>
+			<li>quote was made into a shirt</li>
+			<li>meta joke about halo multiplayer not making sense</li>
+			<li>If you forget to drink and the other team calls you out, your team must drink</li>
+			<li>son of a bitch!</li>
+			<li>Vick</li>
+			<li>Equipment use (mostly Meta)</li>
+		</ul>
+		
+		<span style="font-size:50px;">Roll Fives</span>
+		<img src="https://kcdd66786wordpress.wordpress.com/wp-content/uploads/2019/02/dice-2.gif">
+		<!-- <img> -->
+		
+		<ul style="width:400;font-size:20px;" align="left">
+			<li>if you genuinely laugh</li>
+		</ul>
+		
+		<!-- <img> -->
+		<span style="font-size:50px;">Finish Drink</span>
+		<img src="https://gifdb.com/images/high/halo-what-happened-uv2xw7rbjt42skhc.gif">
+		
+		<ul style="width:400;font-size:20px;" align="left">
+			<li>at any point you say this series is good</li>
+			<li>reds and blues put aside their differences and fight together</li>
+			<li>switch games (once per night)</li>
+			<li>Song with lyrics</li>
+			<li>MAC Cannon is fired</li>
+			<li>Helmet is removed</li>
+		</ul>
+	</div>
+</body>
+
+<script>
+var queryString = window.location.search;
+var urlParams = new URLSearchParams(queryString);
+
+var character = urlParams.get('character');
+var team = urlParams.get('team');
+console.log(character);
+console.log(team);
+
+document.getElementById('character').src = "partialHTML/" + character + ".html";
+document.getElementById('team').src = "partialHTML/" + team + ".html";
+</script>
